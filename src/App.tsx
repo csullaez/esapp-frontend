@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import IngresoCliente from "./pages/IngresoCliente";
-/* import Facturas from "./pages/Facturas";
-import FacturasAdmin from "./pages/FacturasAdmin"; */
+import Facturas from "./pages/Facturas";
 import "./App.css";
 
 function App() {
@@ -9,8 +8,7 @@ function App() {
     <div className="layout">
       <Routes>
         <Route path="/" element={<IngresoCliente />} />
-        {/* <Route path="/facturas/:idCliente?" element={<Facturas />} />
-        <Route path="/facturasAdmin" element={<FacturasAdmin />} /> */}
+        <Route path="/facturas/:idCliente?" element={<Facturas />} />
       </Routes>
     </div>
   );

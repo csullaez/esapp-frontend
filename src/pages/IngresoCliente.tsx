@@ -74,7 +74,7 @@ export default function IngresoCliente() {
             <input
               id="idCliente"
               className="loginInput"
-              placeholder="Ej: 123"
+              placeholder="Ejemplo: 123"
               value={idCliente}
               onChange={(e) => setIdCliente(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && obtenerFacturas()}
