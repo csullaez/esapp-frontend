@@ -1,0 +1,37 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.filtersRow {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filtersInput {
+  flex: 1 1 260px;
+  border-radius: 12px;
+}
+
+.filtersSelect {
+  flex: 0 0 180px;
+}
+
+.paginationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.paginationMeta {
+  font-size: 12px;
+  color: rgba(15, 23, 42, 0.65);
+}
+
+.paginationBtns {
+  display: flex;
+  gap: 8px;
+}
