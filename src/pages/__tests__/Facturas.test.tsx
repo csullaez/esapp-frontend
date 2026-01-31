@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -45,8 +46,8 @@ describe("Facturas - flujo de pago", () => {
       estado: ESTADOS_FACTURA.PENDIENTE,
     };
 
-    obtenerFacturasPorIdCliente.mockResolvedValue([facturaPendiente]);
-    pagarFacturaMock.mockResolvedValue(undefined);
+    (obtenerFacturasPorIdCliente as unknown as Mock).mockResolvedValue([facturaPendiente]);
+    (pagarFacturaMock as unknown as Mock).mockResolvedValue(undefined);
 
     renderFacturasRoute("123");
 
@@ -84,8 +85,8 @@ describe("Facturas - flujo de pago", () => {
       estado: ESTADOS_FACTURA.PENDIENTE,
     };
 
-    (obtenerFacturasPorIdCliente as any).mockResolvedValue([facturaPendiente]);
-    (pagarFacturaMock as any).mockRejectedValue(
+    (obtenerFacturasPorIdCliente as unknown as Mock).mockResolvedValue([facturaPendiente]);
+    (pagarFacturaMock as unknown as Mock).mockRejectedValue(
       new Error(
         "No se pudo procesar el pago, intente otra vez en unos minutos",
       ),

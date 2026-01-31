@@ -44,8 +44,11 @@ test("Flujo: ingresar, ver facturas y pagar una factura", async ({
   }
 
   const cardAgua = page
-    .locator("div", { hasText: "Servicio" })
+    .locator("div")
+    .filter({ hasText: "Servicio" })
     .filter({ hasText: "Agua" })
+    .filter({ hasText: "Periodo" })
+    .filter({ hasText: "2025-12" })
     .first();
 
   await expect(cardAgua).toBeVisible();
@@ -59,5 +62,5 @@ test("Flujo: ingresar, ver facturas y pagar una factura", async ({
 
   await expect(cardAgua).toContainText(/PAGADO/i);
 
-  await expect(cardAgua.getByRole("button", { name: "Pagar" })).toHaveCount(1);
+  await expect(cardAgua.getByRole("button", { name: "Ver" })).toBeVisible();
 });

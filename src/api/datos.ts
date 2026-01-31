@@ -13,7 +13,7 @@ export const FACTURAS_DATA: Factura[] = [
     id: 2,
     idCliente: "123",
     servicio: "Luz",
-    periodo: "2025-12",
+    periodo: "2026-01",
     monto: 120.5,
     estado: "PENDIENTE",
   },
