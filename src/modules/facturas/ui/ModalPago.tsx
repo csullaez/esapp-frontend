@@ -31,8 +31,8 @@ export function ModalPago({
     try {
       await onConfirmarPago(factura.id);
       onCerrar();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // console.error(error);
     }
   };
 
