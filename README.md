@@ -61,6 +61,7 @@ npm run dev
 
 ## Estructura del Proyecto
 
+```
 src/
 ├─ common/ # Componentes reutilizables
 ├─ modules/
@@ -74,7 +75,7 @@ src/
 tests/
 └─ e2e/ # Pruebas End-to-End
 
-
+```
 ---
 
 ## Datos de Prueba
@@ -82,7 +83,7 @@ tests/
 | idCliente | Descripción                                   |
 |----------|-----------------------------------------------|
 | 123      | Cliente con facturas pendientes y pagadas     |
-| 456      | Cliente con facturas pagadas                  |
+| 456      | Cliente con facturas pendiente                |
 | 999      | Cliente inexistente (flujo de error)          |
 
 ---
