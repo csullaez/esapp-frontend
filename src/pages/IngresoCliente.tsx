@@ -30,7 +30,7 @@ export default function IngresoCliente() {
       const facturas = await obtenerFacturasPorIdCliente(idCliente.trim());
 
       if (!facturas || facturas.length === 0) {
-        setMensaje("No se encontraron facturas asociadas a ese idCliente.");
+        setMensaje("No se encontraron facturas asociadas al Cliente ingresado.");
         return;
       }
 
@@ -47,7 +47,6 @@ export default function IngresoCliente() {
   };
 
   return (
-    //TODO: Mejorar estilos
     <div className="loginLayout">
       <div className="loginCard">
         <section className="loginLeft">
@@ -81,6 +80,9 @@ export default function IngresoCliente() {
               disabled={cargando}
             />
             {mensaje && <div className="loginAlert">{mensaje}</div>}
+            <p className="loginHint">
+              Tip: prueba con <code>123</code> o <code>456</code>
+            </p>
             <button
               className="loginButton"
               onClick={obtenerFacturas}
@@ -126,9 +128,6 @@ export default function IngresoCliente() {
             >
               Administrador
             </button>
-            <p className="loginHint">
-              Tip: prueba con <code>123</code> o <code>456</code>
-            </p>
           </div>
         </section>
 

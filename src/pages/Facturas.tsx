@@ -1,9 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { CustomDataTable } from "../common/components/DataTable/CustomDataTable.tsx";
 import { obtenerFacturasPorIdCliente } from "../api/facturas.api.ts";
-import type { EstadoFactura, Factura } from "../types/factura";
 import { useNavigate, useParams } from "react-router-dom";
-// import "../styles/global.css";
+import type {
+  EstadoFactura,
+  Factura,
+} from "../modules/facturas/types/factura.ts";
+import { ModalPago } from "../modules/facturas/ui/ModalPago.tsx";
+import { EstadosFactura } from "../modules/facturas/ui/EstadosFactura.tsx";
+import { ModalDetallePago } from "../modules/facturas/ui/ModalDetallePago.tsx";
+import styles from "../modules/facturas/ui/facturas.module.css";
 
 export default function Facturas() {
   const { idCliente } = useParams<{ idCliente: string }>();
@@ -18,6 +24,13 @@ export default function Facturas() {
   const [filtro, setFiltro] = useState<string>("");
   const [estado, setEstado] = useState<"" | Factura["estado"]>("");
   const navigate = useNavigate();
+
+  const [facturaSeleccionada, setFacturaSeleccionada] =
+    useState<Factura | null>(null);
+  const [facturaDetallePago, setFacturaDetallePago] = useState<Factura | null>(
+    null,
+  );
+  const [pagando, setPagando] = useState(false);
 
   const buscarFacturas = async (idCliente: string) => {
     if (!idCliente) return;
@@ -36,6 +49,23 @@ export default function Facturas() {
       );
     } finally {
       setCargando(false);
+    }
+  };
+  const pagarFactura = async (idFactura: number) => {
+    setPagando(true);
+    setError(null);
+
+    try {
+      await new Promise((r) => setTimeout(r, 700));
+
+      setFacturas((prev) =>
+        prev.map((f) => (f.id === idFactura ? { ...f, estado: "PAGADO" } : f)),
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo procesar el pago.");
+      throw e;
+    } finally {
+      setPagando(false);
     }
   };
 
@@ -57,12 +87,6 @@ export default function Facturas() {
 
   const totalPaginas = Math.max(1, Math.ceil(filtrado.length / paginaTamanio));
 
-  if (pagina > totalPaginas) {
-    // evita efecto infinito: setPagina solo si hace falta
-    // (esto se ejecuta en render pero es seguro en este caso; si prefieres useEffect también vale)
-    setPagina(totalPaginas);
-  }
-
   const itemsPagina = useMemo(() => {
     const start = (pagina - 1) * paginaTamanio;
     return filtrado.slice(start, start + paginaTamanio);
@@ -76,35 +100,24 @@ export default function Facturas() {
     { nombre: "Acción" },
   ];
 
-  const filtrosUI = (
-    <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+  const filtros = (
+    <div className={styles.filtersRow}>
       <input
+        className={`input ${styles.filtersInput}`}
         value={filtro}
         onChange={(e) => {
           setPagina(1);
           setFiltro(e.target.value);
         }}
         placeholder="Buscar por servicio, periodo o monto…"
-        style={{
-          flex: "1 1 260px",
-          padding: "10px 12px",
-          borderRadius: 12,
-          border: "1px solid rgba(0,0,0,0.15)",
-        }}
       />
 
       <select
+        className={`select ${styles.filtersSelect}`}
         value={estado}
         onChange={(e) => {
           setPagina(1);
           setEstado(e.target.value as EstadoFactura);
-        }}
-        style={{
-          flex: "0 0 180px",
-          padding: "10px 12px",
-          borderRadius: 12,
-          border: "1px solid rgba(0,0,0,0.15)",
-          background: "white",
         }}
       >
         <option value="">Todos</option>
@@ -115,31 +128,17 @@ export default function Facturas() {
   );
 
   const paginacion = (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-      }}
-    >
-      <div style={{ fontSize: 12, color: "rgba(0,0,0,0.65)" }}>
+    <div className={styles.paginationRow}>
+      <div className={styles.paginationMeta}>
         Página {pagina} de {totalPaginas} — {filtrado.length} registros
       </div>
 
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className={styles.paginationBtns}>
         <button
           type="button"
           disabled={pagina <= 1 || cargando}
           onClick={() => setPagina((p) => Math.max(1, p - 1))}
-          style={{
-            borderRadius: 10,
-            padding: "6px 10px",
-            border: "1px solid rgba(0,0,0,0.15)",
-            background: "white",
-            cursor: "pointer",
-            opacity: pagina <= 1 || cargando ? 0.5 : 1,
-          }}
+          className="btn btnGhost"
         >
           Anterior
         </button>
@@ -148,14 +147,7 @@ export default function Facturas() {
           type="button"
           disabled={pagina >= totalPaginas || cargando}
           onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-          style={{
-            borderRadius: 10,
-            padding: "6px 10px",
-            border: "1px solid rgba(0,0,0,0.15)",
-            background: "white",
-            cursor: "pointer",
-            opacity: pagina >= totalPaginas || cargando ? 0.5 : 1,
-          }}
+          className="btn btnGhost"
         >
           Siguiente
         </button>
@@ -187,31 +179,48 @@ export default function Facturas() {
     factura.servicio,
     factura.periodo,
     <span key={`monto-${factura.id}`}>{Number(factura.monto).toFixed(2)}</span>,
-    <span
-      key={`st-${factura.id}`}
-      style={{
-        padding: "2px 10px",
-        borderRadius: 999,
-        border: "1px solid rgba(0,0,0,0.15)",
-        fontSize: 12,
-      }}
-    >
-      {factura.estado}
-    </span>,
-    <button
-      key={`btn-${factura.id}`}
-      type="button"
-      onClick={() => alert(`Ver factura ${factura.id}`)}
-      style={{
-        borderRadius: 10,
-        padding: "6px 10px",
-        border: "1px solid rgba(0,0,0,0.15)",
-        background: "white",
-        cursor: "pointer",
-      }}
-    >
-      Ver
-    </button>,
+    <EstadosFactura
+      factura={factura}
+      color={
+        factura.estado === "PENDIENTE"
+          ? "inherit"
+          : factura.estado === "PAGADO"
+            ? "success"
+            : "error"
+      }
+    />,
+    (factura.estado === "PENDIENTE" && (
+      <button
+        key={`btn-${factura.id}`}
+        type="button"
+        onClick={() => setFacturaSeleccionada(factura)}
+        style={{
+          borderRadius: 10,
+          padding: "6px 10px",
+          border: "1px solid rgba(0,0,0,0.15)",
+          background: "white",
+          cursor: "pointer",
+        }}
+      >
+        Pagar
+      </button>
+    )) ||
+      (factura.estado === "PAGADO" && (
+        <button
+          key={`btn-${factura.id}`}
+          type="button"
+          onClick={() => setFacturaDetallePago(factura)}
+          style={{
+            borderRadius: 10,
+            padding: "6px 10px",
+            border: "1px solid rgba(0,0,0,0.15)",
+            background: "white",
+            cursor: "pointer",
+          }}
+        >
+          Ver
+        </button>
+      )),
   ]);
 
   const mostrarVacio =
@@ -245,8 +254,7 @@ export default function Facturas() {
         </button>
         <h1 className="hero__titulo"> Consulta y pago de facturas </h1>
         <p className="hero__subtitulo">
-          Ingrese el identificador del cliente <strong>idCliente</strong> para
-          consultar facturas y realizar el pago.
+          Identificador del cliente ingresado: {idCliente}
         </p>
       </header>
 
@@ -262,7 +270,7 @@ export default function Facturas() {
           <div className="estado">
             <h3>Sin facturas</h3>
             <p className="muted">
-              No se encontraron facturas asociadas al idCliente ingresado.
+              No se encontraron facturas asociadas al Cliente ingresado.
             </p>
           </div>
         )}
@@ -272,7 +280,7 @@ export default function Facturas() {
           error={!!error}
           cargando={cargando}
           acciones={acciones}
-          filtros={filtrosUI}
+          filtros={filtros}
           columnas={columnas}
           contenidoTabla={contenidoTabla}
           paginacion={paginacion}
