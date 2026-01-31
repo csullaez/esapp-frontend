@@ -1,73 +1,123 @@
-# React + TypeScript + Vite
+# ESAPP – Frontend de Consulta y Pago de Facturas
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## Descripción General
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**ESAPP Frontend** es una aplicación web de tipo **Single Page Application (SPA)** desarrollada con **React y TypeScript**, cuyo objetivo es permitir a los clientes consultar y pagar facturas de servicios de forma sencilla, segura y sin recarga de página.
 
-## React Compiler
+La aplicación simula la interacción con un backend real mediante **servicios mock**, contemplando flujos de carga, error, estados vacíos y confirmación de pagos.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Tecnologías Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React
+- TypeScript
+- Vite
+- React Router DOM
+- Vitest
+- Testing Library
+- Playwright
+- ESLint
+- CSS Modules
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Requisitos del Sistema
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Nombre  | Versión mínima |
+|--------|----------------|
+| NodeJS | 22.x           |
+| NPM    | 11.x            |
+
+> Recomendado: Node.js **22 LTS o superior**
+
+## Instalación
+
+Para instalar la aplicación se recomienda revisar el siguiente documento:
+
+> [INSTALL.md](INSTALL.md)
+
+### Ejecutar en modo desarrollo
+
+```
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Funcionalidades Principales
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Ingreso mediante identificador de cliente (`idCliente`)
+- Consulta de facturas por cliente
+- Visualización responsive (tabla / tarjetas)
+- Pago de facturas pendientes
+- Actualización automática de estado a **PAGADO**
+- Visualización de comprobante de pago
+- Manejo de errores y estados de carga
+
+---
+
+## Estructura del Proyecto
+
+src/
+├─ common/ # Componentes reutilizables
+├─ modules/
+│ ├─ ingreso/ # Pantalla de ingreso por idCliente
+│ ├─ facturas/ # Consulta y pago de facturas
+│ └─ admin/ # Vista administrativa
+├─ services/ # Servicios mock (API simulada)
+├─ types/ # Tipos y modelos TypeScript
+├─ test/ # Configuración de pruebas unitarias
+└─ router/ # Configuración de rutas
+tests/
+└─ e2e/ # Pruebas End-to-End
+
+
+---
+
+## Datos de Prueba
+
+| idCliente | Descripción                                   |
+|----------|-----------------------------------------------|
+| 123      | Cliente con facturas pendientes y pagadas     |
+| 456      | Cliente con facturas pagadas                  |
+| 999      | Cliente inexistente (flujo de error)          |
+
+---
+
+## Flujo de Uso
+
+1. El usuario ingresa su `idCliente`.
+2. El sistema valida el formato.
+3. Se consultan las facturas asociadas.
+4. Se muestran en pantalla.
+5. Las facturas pendientes pueden ser pagadas.
+6. El estado cambia automáticamente a **PAGADO**.
+7. El usuario puede visualizar el comprobante.
+
+---
+
+## Manejo de Estados
+
+La aplicación contempla:
+
+- **Loading**: carga de datos
+- **Error**: cliente inexistente o error en el pago
+- **Empty State**: cliente sin facturas
+- **Success**: pago exitoso
+
+---
+
+## Pruebas Automatizadas
+
+### Unitarias
+```
+npm run test:run
+```
+
+### End-to-End
+```
+npm run test:e2e
 ```
