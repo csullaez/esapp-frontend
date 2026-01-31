@@ -1,4 +1,5 @@
-import { type Factura } from "../types/factura";
+import type { Factura } from "../modules/facturas/types/factura";
+
 export const FACTURAS_DATA: Factura[] = [
   {
     id: 1,

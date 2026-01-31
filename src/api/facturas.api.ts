@@ -1,4 +1,4 @@
-import type { Factura } from "../types/factura";
+import type { Factura } from "../modules/facturas/types/factura";
 import { FACTURAS_DATA } from "./datos";
 
 const demoraSimulada = (ms: number) => new Promise((r) => setTimeout(r, ms));
