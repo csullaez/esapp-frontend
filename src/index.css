@@ -1,6 +1,3 @@
-/* src/index.css */
-
-/* Reset */
 *,
 *::before,
 *::after {
@@ -30,7 +27,6 @@ body {
   line-height: 1.5;
 }
 
-/* Tokens (consistentes) */
 :root {
   --bg: #f6f7fb;
   --surface: #ffffff;
@@ -49,4 +45,3 @@ body {
   --danger: #b91c1c;
   --success: #16a34a;
 }
-
