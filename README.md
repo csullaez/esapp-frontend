@@ -63,15 +63,15 @@ npm run dev
 
 ```
 src/
+├─ api/ # Servicios mock
 ├─ common/ # Componentes reutilizables
 ├─ modules/
-│ ├─ ingreso/ # Pantalla de ingreso por idCliente
 │ ├─ facturas/ # Consulta y pago de facturas
-│ └─ admin/ # Vista administrativa
-├─ services/ # Servicios mock (API simulada)
-├─ types/ # Tipos y modelos TypeScript
+    ├─ ui/ # Componentes de Facturas
+    ├─ types/ # Tipos y modelos de Facturas
+├─ pages/ # Vistas del proyecto
+├─ styles/ # Estilos globales
 ├─ test/ # Configuración de pruebas unitarias
-└─ router/ # Configuración de rutas
 tests/
 └─ e2e/ # Pruebas End-to-End
 
