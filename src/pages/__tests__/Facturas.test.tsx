@@ -8,7 +8,6 @@ import {
   type Factura,
 } from "../../modules/facturas/types/factura";
 
-// Mock del módulo API usado por Facturas.tsx
 vi.mock("../../api/facturas.api.ts", () => {
   return {
     obtenerFacturasPorIdCliente: vi.fn(),
@@ -46,41 +45,32 @@ describe("Facturas - flujo de pago", () => {
       estado: ESTADOS_FACTURA.PENDIENTE,
     };
 
-    (obtenerFacturasPorIdCliente as any).mockResolvedValue([facturaPendiente]);
-    (pagarFacturaMock as any).mockResolvedValue(undefined);
+    obtenerFacturasPorIdCliente.mockResolvedValue([facturaPendiente]);
+    pagarFacturaMock.mockResolvedValue(undefined);
 
     renderFacturasRoute("123");
 
-    // Espera a que cargue la fila
     await screen.findByText("Electricidad");
 
-    // Abre modal
     await userEvent.click(screen.getByRole("button", { name: /pagar/i }));
 
-    // Modal presente
     expect(screen.getByRole("dialog")).toBeInTheDocument();
 
-    // Botón correcto (no el <h3>)
     const btnConfirmar = screen.getByRole("button", {
       name: /confirmar pago/i,
     });
     expect(btnConfirmar).toBeInTheDocument();
 
-    // Confirma pago
     await userEvent.click(btnConfirmar);
 
-    // Verifica que se llamó al mock
     await waitFor(() => {
       expect(pagarFacturaMock).toHaveBeenCalledWith(10);
     });
 
-    // Ya no debe existir botón "Pagar" para esa factura
     await waitFor(() => {
       expect(screen.queryByRole("button", { name: /pagar/i })).toBeNull();
     });
 
-    // Y debe verse estado PAGADO en la UI
-    // expect(screen.getByText(/pagado/i)).toBeInTheDocument();
     expect(screen.getByText("PAGADO")).toBeInTheDocument();
   });
 
@@ -105,25 +95,20 @@ describe("Facturas - flujo de pago", () => {
 
     await screen.findByText("Electricidad");
 
-    // Abre modal
     await userEvent.click(screen.getByRole("button", { name: /pagar/i }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
 
-    // Confirma pago (fallará)
     await userEvent.click(
       screen.getByRole("button", { name: /confirmar pago/i }),
     );
 
-    // Modal debe seguir abierto + error visible
     await waitFor(() => {
       const dialog = screen.getByRole("dialog");
       const alert = within(dialog).getByRole("alert");
 
-      // Verifica el mensaje “específico” (evita el match del título)
       expect(alert).toHaveTextContent(/intente otra vez en unos minutos/i);
     });
 
-    // Factura sigue pendiente → botón Pagar aún existe
     expect(screen.getByRole("button", { name: /pagar/i })).toBeInTheDocument();
   });
 });
