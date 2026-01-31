@@ -8,6 +8,7 @@ type ModalPagoProps = {
   onConfirmarPago: (idFactura: number) => Promise<void>;
   pagando?: boolean;
   formatearMonto?: (monto: number) => string;
+  errorPago?: string | null;
 };
 
 export function ModalPago({
@@ -17,6 +18,7 @@ export function ModalPago({
   onConfirmarPago,
   pagando = false,
   formatearMonto,
+  errorPago,
 }: ModalPagoProps) {
   const montoTexto = (monto: number) => {
     if (formatearMonto) return formatearMonto(monto);
@@ -25,8 +27,13 @@ export function ModalPago({
 
   const confirmar = async () => {
     if (!factura) return;
-    await onConfirmarPago(factura.id);
-    onCerrar();
+
+    try {
+      await onConfirmarPago(factura.id);
+      onCerrar();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -47,7 +54,7 @@ export function ModalPago({
           </button>
 
           <button
-            className="btn btn--primary"
+            className="loginButton"
             type="button"
             onClick={confirmar}
             disabled={pagando}
@@ -58,6 +65,12 @@ export function ModalPago({
         </>
       }
     >
+      {errorPago && (
+        <div className="estado estado--error" role="alert">
+          <div className="estado__titulo">No se pudo procesar el pago</div>
+          <div className="estado__texto">{errorPago}</div>
+        </div>
+      )}
       {factura && (
         <div style={{ display: "grid", gap: 10 }}>
           <p style={{ margin: 0 }}>

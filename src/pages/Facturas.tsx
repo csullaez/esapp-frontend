@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { CustomDataTable } from "../common/components/DataTable/CustomDataTable.tsx";
-import { obtenerFacturasPorIdCliente } from "../api/facturas.api.ts";
+import {
+  obtenerFacturasPorIdCliente,
+  pagarFacturaMock,
+} from "../api/facturas.api.ts";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-    ESTADOS_FACTURA,
+  ESTADOS_FACTURA,
   type EstadoFactura,
   type Factura,
 } from "../modules/facturas/types/factura.ts";
@@ -18,6 +21,7 @@ export default function Facturas() {
   const [cargando, setCargando] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [idClienteActual, setIdClienteActual] = useState<string>("");
+  const [pagoError, setPagoError] = useState<string | null>(null);
 
   const [pagina, setPagina] = useState<number>(1);
   const paginaTamanio = 4;
@@ -52,21 +56,28 @@ export default function Facturas() {
       setCargando(false);
     }
   };
+
   const pagarFactura = async (idFactura: number) => {
     setPagando(true);
-    setError(null);
+
+    setPagoError(null);
 
     try {
-      await new Promise((r) => setTimeout(r, 700));
+      await pagarFacturaMock(idFactura);
 
       setFacturas((prev) =>
         prev.map((f) =>
           f.id === idFactura ? { ...f, estado: ESTADOS_FACTURA.PAGADO } : f,
         ),
       );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "No se pudo procesar el pago.");
-      throw e;
+    } catch (error) {
+      let mensaje = "No se pudo procesar el pago.";
+
+      if (error instanceof Error && error.message) {
+        mensaje = error.message;
+      }
+      setPagoError(mensaje);
+      throw new Error(mensaje);
     } finally {
       setPagando(false);
     }
@@ -252,7 +263,11 @@ export default function Facturas() {
         abierta={!!facturaSeleccionada}
         factura={facturaSeleccionada}
         pagando={pagando}
-        onCerrar={() => setFacturaSeleccionada(null)}
+        errorPago={pagoError}
+        onCerrar={() => {
+          setPagoError(null);
+          setFacturaSeleccionada(null);
+        }}
         onConfirmarPago={pagarFactura}
       />
 
