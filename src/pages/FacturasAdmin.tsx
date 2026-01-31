@@ -3,9 +3,10 @@ import { FormularioBusquedaCliente } from "../modules/facturas/ui/FormularioBusq
 import { CustomDataTable } from "../common/components/DataTable/CustomDataTable.tsx";
 import { obtenerFacturasPorIdCliente } from "../api/facturas.api.ts";
 import { useNavigate } from "react-router-dom";
-import type {
-  EstadoFactura,
-  Factura,
+import {
+  ESTADOS_FACTURA,
+  type EstadoFactura,
+  type Factura,
 } from "../modules/facturas/types/factura.ts";
 import { EstadosFactura } from "../modules/facturas/ui/EstadosFactura.tsx";
 
@@ -193,9 +194,9 @@ export default function FacturasAdmin() {
     <EstadosFactura
       factura={factura}
       color={
-        factura.estado === "PENDIENTE"
+        factura.estado === ESTADOS_FACTURA.PENDIENTE
           ? "inherit"
-          : factura.estado === "PAGADO"
+          : factura.estado === ESTADOS_FACTURA.PAGADO
             ? "success"
             : "error"
       }

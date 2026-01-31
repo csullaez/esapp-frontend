@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { CustomDataTable } from "../common/components/DataTable/CustomDataTable.tsx";
 import { obtenerFacturasPorIdCliente } from "../api/facturas.api.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import type {
-  EstadoFactura,
-  Factura,
+import {
+    ESTADOS_FACTURA,
+  type EstadoFactura,
+  type Factura,
 } from "../modules/facturas/types/factura.ts";
 import { ModalPago } from "../modules/facturas/ui/ModalPago.tsx";
 import { EstadosFactura } from "../modules/facturas/ui/EstadosFactura.tsx";
@@ -59,7 +60,9 @@ export default function Facturas() {
       await new Promise((r) => setTimeout(r, 700));
 
       setFacturas((prev) =>
-        prev.map((f) => (f.id === idFactura ? { ...f, estado: "PAGADO" } : f)),
+        prev.map((f) =>
+          f.id === idFactura ? { ...f, estado: ESTADOS_FACTURA.PAGADO } : f,
+        ),
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "No se pudo procesar el pago.");
@@ -182,14 +185,14 @@ export default function Facturas() {
     <EstadosFactura
       factura={factura}
       color={
-        factura.estado === "PENDIENTE"
+        factura.estado === ESTADOS_FACTURA.PENDIENTE
           ? "inherit"
-          : factura.estado === "PAGADO"
+          : factura.estado === ESTADOS_FACTURA.PAGADO
             ? "success"
             : "error"
       }
     />,
-    (factura.estado === "PENDIENTE" && (
+    (factura.estado === ESTADOS_FACTURA.PENDIENTE && (
       <button
         key={`btn-${factura.id}`}
         type="button"
@@ -205,7 +208,7 @@ export default function Facturas() {
         Pagar
       </button>
     )) ||
-      (factura.estado === "PAGADO" && (
+      (factura.estado === ESTADOS_FACTURA.PAGADO && (
         <button
           key={`btn-${factura.id}`}
           type="button"

@@ -1,5 +1,5 @@
 import { Modal } from "../../../common/components/Modal/Modal";
-import type { Factura } from "../types/factura";
+import { ESTADOS_FACTURA, type Factura } from "../types/factura";
 
 type ModalDetallePagoProps = {
   abierta: boolean;
@@ -19,7 +19,7 @@ export function ModalDetallePago({
     return `Bs. ${monto.toFixed(2)}`;
   };
 
-  const esPagado = factura?.estado === "PAGADO";
+  const esPagado = factura?.estado === ESTADOS_FACTURA.PAGADO;
 
   return (
     <Modal
@@ -35,8 +35,7 @@ export function ModalDetallePago({
       {factura && (
         <div style={{ display: "grid", gap: 12 }}>
           <p style={{ margin: 0, opacity: 0.8 }}>
-            Informacion de la factura en estado{" "}
-            <strong>PAGADO</strong>.
+            Informacion de la factura en estado <strong>PAGADO</strong>.
           </p>
 
           <div className="estado" style={{ borderStyle: "solid" }}>
