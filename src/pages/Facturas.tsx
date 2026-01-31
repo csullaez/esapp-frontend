@@ -237,12 +237,32 @@ export default function Facturas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idCliente]);
 
+  useEffect(() => {
+    if (pagina > totalPaginas) {
+      setPagina(totalPaginas);
+    }
+  }, [pagina, totalPaginas]);
+
   return (
     <div>
+      <ModalPago
+        abierta={!!facturaSeleccionada}
+        factura={facturaSeleccionada}
+        pagando={pagando}
+        onCerrar={() => setFacturaSeleccionada(null)}
+        onConfirmarPago={pagarFactura}
+      />
+
+      <ModalDetallePago
+        abierta={Boolean(facturaDetallePago)}
+        factura={facturaDetallePago}
+        onCerrar={() => setFacturaDetallePago(null)}
+      />
+
       <header>
         <button
           type="button"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           style={{
             borderRadius: 10,
             padding: "10px 15px",
